@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Jual Pixel 1 Miliar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { text-align: center; font-family: Arial; background: #f0f0f0; margin: 0; padding: 20px; }
+    canvas { border: 2px solid black; cursor: pointer; background: white; max-width: 95%; height: auto; }
+    .info { background: gold; padding: 10px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>JUAL PIXEL - 1 BLOK = Rp 10.000</h1>
+  <div class="info">Sudah terjual: 1 blok | Tersisa: 9.999 blok</div>
+  <p>Klik blok yang mau dibeli, langsung chat WA admin!</p>
+  <canvas id="c" width="1000" height="1000"></canvas>
+  <script>
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    for (let x = 0; x < 100; x++) {
+      for (let y = 0; y < 100; y++) {
+        ctx.strokeRect(x*10, y*10, 10, 10);
+      }
+    }
+    canvas.addEventListener('click', function(e) {
+      const rect = canvas.getBoundingClientRect();
+      const x = Math.floor((e.clientX - rect.left) / rect.width * 100);
+      const y = Math.floor((e.clientY - rect.top) / rect.height * 100);
+      const pesan = encodeURIComponent(`Halo Admin, saya mau beli Pixel Blok X:${x} Y:${y} seharga Rp 10.000. Ini bukti transfer saya:`);
+      // GANTI NOMOR INI DENGAN NOMOR WA KAMU (format 62812...)
+      const waNomor = '6285885923726';
+      window.open(`https://wa.me/${waNomor}?text=${pesan}`, '_blank');
+      ctx.fillStyle = 'gold';
+      ctx.fillRect(x*10, y*10, 10, 10);
+    });
+  </script>
+</body>
+</html>
