@@ -1,38 +1,81 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-  <title>Jual Pixel 1 Miliar</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body { text-align: center; font-family: Arial; background: #f0f0f0; margin: 0; padding: 20px; }
-    canvas { border: 2px solid black; cursor: pointer; background: white; max-width: 95%; height: auto; }
-    .info { background: gold; padding: 10px; font-weight: bold; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jual Pixel - Rp 10.000 / Blok</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+.pixel{width:10%;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid rgba(255,255,255,.2);font-size:10px;font-weight:bold;color:#fff;transition:.1s}
+.pixel:hover{transform:scale(1.05);filter:brightness(1.2)}
+.sold{background:#dc2626!important;cursor:not-allowed}
+.selected{outline:3px solid #22c55e;outline-offset:-3px}
+</style>
 </head>
-<body>
-  <h1>JUAL PIXEL - 1 BLOK = Rp 10.000</h1>
-  <div class="info">Sudah terjual: 1 blok | Tersisa: 9.999 blok</div>
-  <p>Klik blok yang mau dibeli, langsung chat WA admin!</p>
-  <canvas id="c" width="1000" height="1000"></canvas>
-  <script>
-    const canvas = document.getElementById('c');
-    const ctx = canvas.getContext('2d');
-    for (let x = 0; x < 100; x++) {
-      for (let y = 0; y < 100; y++) {
-        ctx.strokeRect(x*10, y*10, 10, 10);
-      }
+<body class="bg-gray-900 text-white min-h-screen">
+<header class="p-6 text-center">
+<h1 class="text-4xl md:text-6xl font-black">JUAL PIXEL</h1>
+<p class="text-gray-400 mt-2">Rp 10.000 / blok • Maks 10 blok / orang • Bayar via ShopeePay</p>
+<div class="mt-3 bg-gray-800 inline-block px-4 py-2 rounded-xl text-sm border border-gray-700">
+Sudah Terjual: <b id="soldCount" class="text-green-400">0</b> | Tersisa: <b id="leftCount">10000</b> | Dipilih: <b id="selCount" class="text-yellow-300">0</b>
+</div>
+<p class="text-xs text-gray-500 mt-2">ShopeePay: 085885923726</p>
+</header>
+<main class="max-w-4xl mx-auto p-4">
+<div id="grid" class="flex flex-wrap bg-gray-800 rounded-lg overflow-hidden"></div>
+<div class="mt-4 flex flex-col md:flex-row gap-3 items-center justify-center">
+<div class="bg-gray-800 px-5 py-3 rounded-xl border border-gray-700">Total: <b id="total" class="text-2xl text-green-400">Rp 0</b></div>
+<button id="buy" class="bg-green-500 hover:bg-green-600 text-black px-8 py-3 rounded-xl font-bold text-lg w-full md:w-auto">BELI VIA WA</button>
+<button id="clear" class="bg-gray-700 px-5 py-3 rounded-xl">Hapus</button>
+</div>
+</main>
+<script>
+// ========================================
+// INI SATU-SATUNYA YANG KAMU EDIT NANTI!!!
+// Kalau ada yang beli blok 1,2,3, kamu tulis [1,2,3]
+// Kalau beli blok 1 sampai 10, kamu tulis [1,2,3,4,5,6,7,8,9,10]
+// ========================================
+let soldBlocks = [42]; // <-- GANTI ANGKA INI SAJA KALAU ADA YANG BELI
+
+let selected = new Set();
+const grid = document.getElementById('grid');
+function render(){
+  grid.innerHTML='';
+  for(let i=1;i<=10000;i++){
+    const d=document.createElement('div');
+    d.className='pixel'; d.textContent=i;
+    if(soldBlocks.includes(i)){
+      d.classList.add('sold'); d.textContent='SOLD';
+    } else {
+      d.style.background=`hsl(${i*137%360},70%,45%)`;
+      d.onclick=()=>{
+        if(selected.has(i)){selected.delete(i); d.classList.remove('selected');}
+        else{
+          if(selected.size>=10){alert('Maksimal 10 blok ya!'); return;}
+          selected.add(i); d.classList.add('selected');
+        }
+        update();
+      };
     }
-    canvas.addEventListener('click', function(e) {
-      const rect = canvas.getBoundingClientRect();
-      const x = Math.floor((e.clientX - rect.left) / rect.width * 100);
-      const y = Math.floor((e.clientY - rect.top) / rect.height * 100);
-      const pesan = encodeURIComponent(`Halo Admin, saya mau beli Pixel Blok X:${x} Y:${y} seharga Rp 10.000. Ini bukti transfer saya:`);
-      // GANTI NOMOR INI DENGAN NOMOR WA KAMU (format 62812...)
-      const waNomor = '6285885923726';
-      window.open(`https://wa.me/${waNomor}?text=${pesan}`, '_blank');
-      ctx.fillStyle = 'gold';
-      ctx.fillRect(x*10, y*10, 10, 10);
-    });
-  </script>
+    grid.appendChild(d);
+  }
+  update();
+}
+function update(){
+  document.getElementById('soldCount').innerText=soldBlocks.length;
+  document.getElementById('leftCount').innerText=10000-soldBlocks.length;
+  document.getElementById('selCount').innerText=selected.size;
+  document.getElementById('total').innerText='Rp '+(selected.size*10000).toLocaleString('id-ID');
+}
+document.getElementById('buy').onclick=()=>{
+  if(selected.size===0){alert('Pilih dulu bloknya, klik blok yang kamu mau');return;}
+  const nums=[...selected].sort((a,b)=>a-b).join(',');
+  const total=selected.size*10000;
+  const msg=`Halo! Saya mau beli ${selected.size} blok. Nomor blok: ${nums}. Total Rp ${total.toLocaleString('id-ID')}. Saya akan bayar via ShopeePay 085885923726. Mohon konfirmasi!`;
+  window.open(`https://wa.me/6285885923726?text=${encodeURIComponent(msg)}`,'_blank');
+};
+document.getElementById('clear').onclick=()=>{selected.clear();render();};
+render();
+</script>
 </body>
 </html>
